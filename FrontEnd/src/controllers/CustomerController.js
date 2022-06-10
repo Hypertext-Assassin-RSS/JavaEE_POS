@@ -1,4 +1,6 @@
 
+loadAllCustomer();
+
 var RegCusID = /^[A-z/0-9]{5,10}$/;
 var RegExCusName = /^[A-z ]{4,20}$/;
 var RegExCusAddress = /^[0-9/A-z. ,]{7,}$/;
@@ -63,6 +65,26 @@ function clear() {
     $("#cusNameAdd").val("")
     $("#cusAddressAdd").val("")
     $("#cusSalaryAdd").val("")
+}
+
+function loadAllCustomer() {
+    $("#cusTblBody").empty();
+
+    $.ajax({
+        url:"http://localhost:8080/BackEnd_Web_exploded/customer",
+        method:"GET",
+        success:function (resp) {
+            for (const customer of resp.data){
+                let row = `<tr><td>${customer.id}</td><td>${customer.name}</td><td>${customer.address}</td><td>${customer.salary}</td></tr>`;
+                $("#cusTblBody").append(row);
+            }
+        },
+        error:function (ob, errorSatus,t) {
+            console.log(ob)
+            console.log(errorSatus)
+            console.log(t)
+        }
+    })
 }
 
 
