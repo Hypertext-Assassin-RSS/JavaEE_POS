@@ -1,4 +1,3 @@
-
 loadAllCustomer();
 
 var RegCusID = /^[A-z/0-9]{5,10}$/;
@@ -29,7 +28,7 @@ $("#cusIdAdd").keydown(function (event) {
                                                         $("#error4").css("display","none")
                                                         $("#addCus").focus().keydown(function (event) {
                                                             if (event.key === "Enter") {
-                                                                clear();
+
                                                                 $("#cusIdAdd").focus();
                                                             }
                                                         });
@@ -61,15 +60,20 @@ $("#cusIdAdd").keydown(function (event) {
 });
 
 function clear() {
-    $("#cusIdAdd").val("")
-    $("#cusNameAdd").val("")
-    $("#cusAddressAdd").val("")
-    $("#cusSalaryAdd").val("")
+    alert("Clear")
+    $("#cusIdAdd").val("");
+    $("#cusNameAdd").val("");
+    $("#cusAddressAdd").val("");
+    $("#cusSalaryAdd").val("");
 }
+
+$("#clear-btn-cus").click(function () {
+    alert("OK")
+    clear();
+});
 
 function loadAllCustomer() {
     $("#cusTblBody").empty();
-
     $.ajax({
         url:"http://localhost:8080/BackEnd_Web_exploded/customer",
         method:"GET",
@@ -78,6 +82,7 @@ function loadAllCustomer() {
                 let row = `<tr><td>${customer.id}</td><td>${customer.name}</td><td>${customer.address}</td><td>${customer.salary}</td></tr>`;
                 $("#cusTblBody").append(row);
             }
+            valueClick();
         },
         error:function (ob, errorSatus,t) {
             console.log(ob)
@@ -86,6 +91,47 @@ function loadAllCustomer() {
         }
     })
 }
+
+$("#addCus").click(function () {
+    let serialize = $("#addCusForm").serialize();
+   $.ajax({
+      url:"http://localhost:8080/BackEnd_Web_exploded/customer",
+       method:"POST",
+       data:serialize,
+       success:function (res) {
+          clear();
+          console.log(res.message)
+           console.log(res)
+            alert(res.message);
+            loadAllCustomer();
+       },
+       error:function (ob,status,t,res) {
+          alert(res.message+":"+res.data)
+           console.log(ob)
+           console.log(status)
+       }
+   }); 
+});
+
+
+function valueClick() {
+    $("#cusTblBody>tr").click(function () {
+        let id = $(this).children().eq(0).text();
+        let name = $(this).children().eq(1).text();
+        let address = $(this).children().eq(2).text();
+        let salary = $(this).children().eq(3).text();
+
+
+        $("#cusIdAdd").val(id);
+        $("#cusNameAdd").val(name);
+        $("#cusAddressAdd").val(address);
+        $("#cusSalaryAdd").val(salary);
+    });
+}
+
+
+
+
 
 
 

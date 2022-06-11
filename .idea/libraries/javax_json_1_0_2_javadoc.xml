@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="javax.json-1.0.2-javadoc">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/lib/javax.json-api-1.1.4.jar!/" />
+      <root url="jar://$USER_HOME$/lib/mysql-connector-java-8.0.28.jar!/" />
+      <root url="jar://$USER_HOME$/lib/javax.json-1.1.4.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/lib/javax.json-1.0.2-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES />
+  </library>
+</component>

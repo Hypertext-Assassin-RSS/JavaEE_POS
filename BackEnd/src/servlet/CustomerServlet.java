@@ -31,9 +31,10 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.addHeader("Access-Control-Allow-Origin","*");
         resp.setContentType("application/json");//set response type
         PrintWriter writer = resp.getWriter();
-        resp.addHeader("Access-Control-Allow-Origin","*");
+
 
         try {
             Connection connection = dataSource.getConnection();
@@ -54,7 +55,6 @@ public class CustomerServlet extends HttpServlet {
                 objectBuilder.add("salary",salary);
                 arrayBuilder.add(objectBuilder.build());
 
-                System.out.println(id+":"+name+":"+address+":"+salary);
             }
 
             JsonObjectBuilder response = Json.createObjectBuilder();
@@ -74,5 +74,45 @@ public class CustomerServlet extends HttpServlet {
             writer.print(response.build());
         }
 
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        PrintWriter writer = resp.getWriter();
+        resp.addHeader("Access-Control-Allow-Origin","*");
+
+        String cusID = req.getParameter("cusID");
+        String cusName = req.getParameter("cusName");
+        String cusAddress = req.getParameter("cusAddress");
+        String cusSalary = req.getParameter("cusSalary");
+
+
+        try {
+            Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO customer values (?,?,?,?)");
+            preparedStatement.setObject(1,cusID);
+            preparedStatement.setObject(2,cusName);
+            preparedStatement.setObject(3,cusAddress);
+            preparedStatement.setObject(4,cusSalary);
+
+            if (preparedStatement.executeUpdate() > 0) {
+                JsonObjectBuilder response = Json.createObjectBuilder();
+                response.add("status",201);
+                response.add("message","SUCCESSFULLY ADD!");
+                response.add("data","");
+                writer.print(response.build());
+            }
+
+            connection.close();
+
+        } catch (SQLException e) {
+            JsonObjectBuilder response = Json.createObjectBuilder();
+            resp.setStatus(HttpServletResponse.SC_CREATED);
+            response.add("status","501");
+            response.add("message","SQL Error");
+            response.add("data",e.getLocalizedMessage());
+            writer.print(response.build());
+
+        }
     }
 }
