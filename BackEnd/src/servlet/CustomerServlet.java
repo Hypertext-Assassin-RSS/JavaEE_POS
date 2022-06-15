@@ -12,10 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 /**
  * @author : Rajith Sanjaya
@@ -31,7 +28,6 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.addHeader("Access-Control-Allow-Origin","*");
         resp.setContentType("application/json");//set response type
         PrintWriter writer = resp.getWriter();
 
@@ -79,7 +75,6 @@ public class CustomerServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter writer = resp.getWriter();
-        resp.addHeader("Access-Control-Allow-Origin","*");
 
         String cusID = req.getParameter("cusID");
         String cusName = req.getParameter("cusName");
@@ -115,4 +110,44 @@ public class CustomerServlet extends HttpServlet {
 
         }
     }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String customerID = req.getParameter("CusID");
+        PrintWriter writer = resp.getWriter();
+        resp.setContentType("application/json");
+
+
+        try {
+            Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("Delete from Customer where id=?");
+            preparedStatement.setObject(1, customerID);
+
+            if (preparedStatement.executeUpdate() > 0) {
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                objectBuilder.add("status", 200);
+                objectBuilder.add("data", "");
+                objectBuilder.add("message", "Successfully Deleted");
+                writer.print(objectBuilder.build());
+            } else {
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                objectBuilder.add("status", 400);
+                objectBuilder.add("data", "Wrong Id Inserted");
+                objectBuilder.add("message", "");
+                writer.print(objectBuilder.build());
+            }
+            connection.close();
+
+        } catch (SQLException throwables) {
+            resp.setStatus(200);
+            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+            objectBuilder.add("status", 500);
+            objectBuilder.add("message", "Error");
+            objectBuilder.add("data", throwables.getLocalizedMessage());
+            writer.print(objectBuilder.build());
+        }
+
+    }
+
+
 }

@@ -129,6 +129,53 @@ function valueClick() {
     });
 }
 
+/*$("#delCus").click(function () {
+    let cusID = $("#cusIdAdd").val();
+    $.ajax({
+        url:"http://localhost:8080/BackEnd_Web_exploded/customer" +cusID,
+        method:"DELETE",
+        success:function (res) {
+            clear();
+            console.log(res.message)
+            console.log(res)
+            /!*alert(res.message);*!/
+            loadAllCustomer();
+        },
+        error:function (ob,status,t,res) {
+            /!*alert()*!/
+            /!*console.log(ob)
+            console.log(status)*!/
+        }
+    })
+});*/
+
+$("#delCus").click(function () {
+    // Get the customer id
+    let customerID = $("#cusIdAdd").val();
+
+    $.ajax({
+        url: "http://localhost:8080/BackEnd_Web_exploded/customer?CusID=" + customerID,
+        method: "DELETE",
+        success: function (res) {
+            console.log(res);
+            if (res.status == 200) {
+                alert(res.message);
+                loadAllCustomer();
+            } else if (res.status == 400) {
+                alert(res.data);
+            } else {
+                alert(res.data);
+            }
+
+        },
+        error: function (ob, status, t) {
+            console.log(ob);
+            console.log(status);
+            console.log(t);
+        }
+    });
+});
+
 
 
 
