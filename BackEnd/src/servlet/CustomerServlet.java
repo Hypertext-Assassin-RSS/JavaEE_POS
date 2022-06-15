@@ -1,9 +1,7 @@
 package servlet;
 
 import javax.annotation.Resource;
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
+import javax.json.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -74,40 +72,39 @@ public class CustomerServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String customerID = req.getParameter("cusID");
+        String customerName = req.getParameter("cusName");
+        String customerAddress = req.getParameter("cusAddress");
+        String salary = req.getParameter("cusSalary");
+
+
         PrintWriter writer = resp.getWriter();
-
-        String cusID = req.getParameter("cusID");
-        String cusName = req.getParameter("cusName");
-        String cusAddress = req.getParameter("cusAddress");
-        String cusSalary = req.getParameter("cusSalary");
-
-
+        resp.setContentType("application/json");
         try {
             Connection connection = dataSource.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO customer values (?,?,?,?)");
-            preparedStatement.setObject(1,cusID);
-            preparedStatement.setObject(2,cusName);
-            preparedStatement.setObject(3,cusAddress);
-            preparedStatement.setObject(4,cusSalary);
+            PreparedStatement preparedStatement = connection.prepareStatement("Insert into Customer values(?,?,?,?)");
+            preparedStatement.setObject(1, customerID);
+            preparedStatement.setObject(2, customerName);
+            preparedStatement.setObject(3, customerAddress);
+            preparedStatement.setObject(4, salary);
 
             if (preparedStatement.executeUpdate() > 0) {
                 JsonObjectBuilder response = Json.createObjectBuilder();
-                response.add("status",201);
-                response.add("message","SUCCESSFULLY ADD!");
-                response.add("data","");
+                resp.setStatus(HttpServletResponse.SC_CREATED);//201
+                response.add("status", 200);
+                response.add("message", "Successfully Added");
+                response.add("data", "");
                 writer.print(response.build());
             }
-
             connection.close();
-
-        } catch (SQLException e) {
+        } catch (SQLException throwables) {
             JsonObjectBuilder response = Json.createObjectBuilder();
-            resp.setStatus(HttpServletResponse.SC_CREATED);
-            response.add("status","501");
-            response.add("message","SQL Error");
-            response.add("data",e.getLocalizedMessage());
+            response.add("status", 400);
+            response.add("message",throwables.getLocalizedMessage() );
+            response.add("data", "Error");
             writer.print(response.build());
-
+            resp.setStatus(HttpServletResponse.SC_OK); //200
+            throwables.printStackTrace();
         }
     }
 
@@ -149,5 +146,45 @@ public class CustomerServlet extends HttpServlet {
 
     }
 
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        JsonReader reader = Json.createReader(req.getReader());
+        JsonObject jsonObject = reader.readObject();
+        String customerID = jsonObject.getString("id");
+        String customerName = jsonObject.getString("name");
+        String customerAddress = jsonObject.getString("address");
+        String customerSalary = jsonObject.getString("salary");
+        PrintWriter writer = resp.getWriter();
+        resp.setContentType("application/json");
 
+
+        try {
+            Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("Update Customer set name=?,address=?,salary=? where id=?");
+            preparedStatement.setObject(1, customerName);
+            preparedStatement.setObject(2, customerAddress);
+            preparedStatement.setObject(3, customerSalary);
+            preparedStatement.setObject(4, customerID);
+            if (preparedStatement.executeUpdate() > 0) {
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                objectBuilder.add("status", 200);
+                objectBuilder.add("message", "Successfully Updated");
+                objectBuilder.add("data", "");
+                writer.print(objectBuilder.build());
+            } else {
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                objectBuilder.add("status", 400);
+                objectBuilder.add("message", "Update Failed");
+                objectBuilder.add("data", "");
+                writer.print(objectBuilder.build());
+            }
+            connection.close();
+        } catch (SQLException throwables) {
+            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+            objectBuilder.add("status", 500);
+            objectBuilder.add("message", "Update Failed");
+            objectBuilder.add("data", throwables.getLocalizedMessage());
+            writer.print(objectBuilder.build());
+        }
+    }
 }
