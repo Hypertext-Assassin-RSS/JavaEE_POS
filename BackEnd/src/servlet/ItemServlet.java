@@ -72,4 +72,43 @@ public class ItemServlet extends HttpServlet {
             writer.print(response.build());
         }
     }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String itemCode = req.getParameter("itemCode");
+        String itemName = req.getParameter("itemName");
+        String itemQty = req.getParameter("itemQty");
+        String itemPrice = req.getParameter("itemPrice");
+
+
+        PrintWriter writer = resp.getWriter();
+        resp.setContentType("application/json");
+
+        try {
+            Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO item VALUE (?,?,?,?)");
+            preparedStatement.setObject(1,itemCode);
+            preparedStatement.setObject(2,itemName);
+            preparedStatement.setObject(3,itemQty);
+            preparedStatement.setObject(4,itemPrice);
+
+            if (preparedStatement.executeUpdate() > 0){
+                JsonObjectBuilder response = Json.createObjectBuilder();
+                response.add("status","200");
+                response.add("message","Successfully Added");
+                response.add("data","");
+                writer.print(response.build());
+            }
+
+            connection.close();
+        } catch (SQLException e) {
+            JsonObjectBuilder response = Json.createObjectBuilder();
+            response.add("status", 400);
+            response.add("message",e.getLocalizedMessage() );
+            response.add("data", "Error");
+            writer.print(response.build());
+            resp.setStatus(HttpServletResponse.SC_OK);
+        }
+
+    }
 }

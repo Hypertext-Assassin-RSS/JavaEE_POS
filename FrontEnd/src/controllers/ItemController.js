@@ -72,16 +72,16 @@ function loadAllItems() {
             valueClick();
 
         },error:function (ob,errorStatus,t) {
-            /*console.log(ob)
+            console.log(ob)
             console.log(errorStatus)
-            console.log(t)*/
+            console.log(t)
         }
     })
 
 }
 
 function valueClick() {
-    $("#cusTblBody>tr").click(function () {
+    $("#itemTblBody>tr").click(function () {
         let id = $(this).children().eq(0).text();
         let name = $(this).children().eq(1).text();
         let QTY = $(this).children().eq(2).text();
@@ -94,3 +94,24 @@ function valueClick() {
         $("#itemPrice").val(price)
     });
 }
+
+
+$("#addItem").click(function () {
+    let serialize = $("#addItemForm").serialize();
+
+    $.ajax({
+        url:"http://localhost:8080/BackEnd_Web_exploded/item",
+        method:"POST",
+        data:serialize,
+        success:function (resp) {
+            loadAllItems();
+            alert(resp.message);
+        },
+        error:function (ob,errorStatus,t) {
+            alert(errorStatus);
+            console.log(ob)
+            console.log(errorStatus)
+        }
+    })
+
+});
