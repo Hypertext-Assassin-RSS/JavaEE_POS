@@ -106,7 +106,7 @@ $("#addCus").click(function () {
             loadAllCustomer();
        },
        error:function (ob,status,t,res) {
-          alert(res.data)
+          alert(res.message+":"+res.data)
            console.log(ob)
            console.log(status)
        }
@@ -129,63 +129,24 @@ function valueClick() {
     });
 }
 
-
-
 $("#delCus").click(function () {
-    // Get the customer id
-    let customerID = $("#cusIdAdd").val();
-
+    let cusID = $("#cusIdAdd").val();
     $.ajax({
-        url: "http://localhost:8080/BackEnd_Web_exploded/customer?CusID=" + customerID,
-        method: "DELETE",
-        success: function (res) {
-            console.log(res);
-            if (res.status == 200) {
-                alert(res.message);
-                loadAllCustomer();
-            } else if (res.status == 400) {
-                alert(res.data);
-            } else {
-                alert(res.data);
-            }
-
+        url:"http://localhost:8080/BackEnd_Web_exploded/customer" +cusID,
+        method:"DELETE",
+        success:function (res) {
+            clear();
+            console.log(res.message)
+            console.log(res)
+            alert(res.message);
+            loadAllCustomer();
         },
-        error: function (ob, status, t) {
-            console.log(ob);
-            console.log(status);
-            console.log(t);
+        error:function (ob,status,t,res) {
+            alert()
+            console.log(ob)
+            console.log(status)
         }
-    });
-});
-
-
-$("#updateCus").click(function () {
-    var cusOb = {
-        id: $("#cusIdAdd").val(),
-        name: $("#cusNameAdd").val(),
-        address: $("#cusAddressAdd").val(),
-        salary: $("#cusSalaryAdd").val()
-    }
-
-    $.ajax({
-        url: "http://localhost:8080/BackEnd_Web_exploded/customer",
-        method: "PUT",
-        contentType: "application/json",
-        data: JSON.stringify(cusOb),
-        success: function (res) {
-            if (res.status === 200) {
-                alert(res.message);
-                loadAllCustomer();
-            } else if (res.status === 400) {
-                alert(res.message);
-            } else {
-                alert(res.data);
-            }
-        },
-        error: function (ob, errorStus) {
-            console.log(ob);
-        }
-    });
+    })
 });
 
 
