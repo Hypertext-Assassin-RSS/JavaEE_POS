@@ -141,7 +141,6 @@ $("#delCus").click(function () {
             console.log(res)
         },
         error:function (ob,status,t,res) {
-            loadAllCustomer();
             alert(res.data+":"+res.message)
             console.log(ob)
             console.log(status)

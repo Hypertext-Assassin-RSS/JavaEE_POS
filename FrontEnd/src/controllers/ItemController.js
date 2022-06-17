@@ -120,16 +120,18 @@ $("#addItem").click(function () {
 $("#delItem").click(function () {
     let itemID = $("#itemCode").val();
     $.ajax({
-        url:"http://localhost:8080/BackEnd_Web_exploded/item"+itemID,
+        url:"http://localhost:8080/BackEnd_Web_exploded/item?itemCode="+itemID,
         method:"DELETE",
         success:function (res) {
             clear();
             loadAllItems();
             alert(res.message);
+            console.log(res.message)
+            console.log(res)
         },
         error:function (ob,status,t) {
-            /*console.log(ob)
-            console.log(status)*/
+            console.log(ob)
+            console.log(status)
         }
     })
 });

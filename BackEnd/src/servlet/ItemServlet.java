@@ -112,7 +112,7 @@ public class ItemServlet extends HttpServlet {
 
     }
 
-   /* @Override
+    @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String itemCode = req.getParameter("itemCode");
         PrintWriter writer = resp.getWriter();
@@ -122,8 +122,8 @@ public class ItemServlet extends HttpServlet {
             Connection connection = dataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement("Delete from item where id=?");
             preparedStatement.setObject(1,itemCode);
-
-            if (preparedStatement.executeUpdate() >0){
+            int i = preparedStatement.executeUpdate();
+            if ( i > 0){
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("status", 200);
                 objectBuilder.add("data", "");
@@ -146,5 +146,5 @@ public class ItemServlet extends HttpServlet {
             objectBuilder.add("data", e.getLocalizedMessage());
             writer.print(objectBuilder.build());
         }
-    }*/
+    }
 }
