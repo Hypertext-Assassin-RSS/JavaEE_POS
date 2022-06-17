@@ -82,7 +82,7 @@ function loadAllCustomer() {
                 let row = `<tr><td>${customer.id}</td><td>${customer.name}</td><td>${customer.address}</td><td>${customer.salary}</td></tr>`;
                 $("#cusTblBody").append(row);
             }
-            valueClick();
+            cusValueClick();
         },
         error:function (ob, errorSatus,t) {
             console.log(ob)
@@ -114,7 +114,7 @@ $("#addCus").click(function () {
 });
 
 
-function valueClick() {
+function cusValueClick() {
     $("#cusTblBody>tr").click(function () {
         let id = $(this).children().eq(0).text();
         let name = $(this).children().eq(1).text();
@@ -132,17 +132,17 @@ function valueClick() {
 $("#delCus").click(function () {
     let cusID = $("#cusIdAdd").val();
     $.ajax({
-        url:"http://localhost:8080/BackEnd_Web_exploded/customer" +cusID,
+        url:"http://localhost:8080/BackEnd_Web_exploded/customer?CusID=" +cusID,
         method:"DELETE",
         success:function (res) {
-            clear();
+            alert(res.message)
+            loadAllCustomer();
             console.log(res.message)
             console.log(res)
-            alert(res.message);
-            loadAllCustomer();
         },
         error:function (ob,status,t,res) {
-            alert()
+            loadAllCustomer();
+            alert(res.data+":"+res.message)
             console.log(ob)
             console.log(status)
         }
@@ -150,6 +150,42 @@ $("#delCus").click(function () {
 });
 
 
+
+$("#updateCus").click(function () {
+    var cusOb = {
+        id: $("#cusIdAdd").val(),
+        name: $("#cusNameAdd").val(),
+        address: $("#cusAddressAdd").val(),
+        salary: $("#cusSalaryAdd").val()
+    }
+    $.ajax({
+        url: "http://localhost:8080/BackEnd_Web_exploded/customer",
+        method: "PUT",
+        contentType: "application/json",
+        data: JSON.stringify(cusOb),
+        success: function (res) {
+            if (res.status === 200) {
+                alert(res.message);
+                loadAllCustomer();
+                console.log(res.message)
+                console.log(res)
+            } else if (res.status === 400) {
+                alert(res.message);
+                console.log(res.message)
+                console.log(res)
+            } else {
+                alert(res.data);
+                console.log(res.message)
+                console.log(res)
+            }
+        },
+        error: function (ob, errorStatus) {
+            console.log(ob);
+            console.log(errorStatus)
+
+        }
+    });
+});
 
 
 

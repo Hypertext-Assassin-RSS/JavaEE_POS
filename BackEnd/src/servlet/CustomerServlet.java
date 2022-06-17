@@ -114,21 +114,21 @@ public class CustomerServlet extends HttpServlet {
         PrintWriter writer = resp.getWriter();
         resp.setContentType("application/json");
 
-
         try {
             Connection connection = dataSource.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement("Delete from Customer where id=?");
             preparedStatement.setObject(1, customerID);
+            int i = preparedStatement.executeUpdate();
 
-            if (preparedStatement.executeUpdate() > 0) {
+            if (i > 0) {
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                objectBuilder.add("status", 200);
+                objectBuilder.add("status", "200");
                 objectBuilder.add("data", "");
                 objectBuilder.add("message", "Successfully Deleted");
                 writer.print(objectBuilder.build());
             } else {
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-                objectBuilder.add("status", 400);
+                objectBuilder.add("status", "400");
                 objectBuilder.add("data", "Wrong Id Inserted");
                 objectBuilder.add("message", "");
                 writer.print(objectBuilder.build());
