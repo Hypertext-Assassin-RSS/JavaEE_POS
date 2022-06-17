@@ -1,9 +1,7 @@
 package servlet;
 
 import javax.annotation.Resource;
-import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObjectBuilder;
+import javax.json.*;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -46,7 +44,7 @@ public class ItemServlet extends HttpServlet {
                 String price = resultSet.getString(4);
 
 
-                System.out.println(id+":"+name+":"+QTY+":"+price);
+                /*System.out.println(id+":"+name+":"+QTY+":"+price);*/
 
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("id",id);
@@ -144,6 +142,52 @@ public class ItemServlet extends HttpServlet {
             objectBuilder.add("status", 500);
             objectBuilder.add("message", "Error");
             objectBuilder.add("data", e.getLocalizedMessage());
+            writer.print(objectBuilder.build());
+        }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        JsonReader reader = Json.createReader(req.getReader());
+        JsonObject jsonObject = reader.readObject();
+        String itemCode = jsonObject.getString("itemCode");
+        String itemName = jsonObject.getString("itemName");
+        String itemQty = jsonObject.getString("itemQty");
+        String itemPrice = jsonObject.getString("itemPrice");
+        PrintWriter writer = resp.getWriter();
+        resp.setContentType("application/json");
+
+        System.out.println(itemCode+":"+itemName+":"+itemQty+":"+itemPrice);
+
+
+        try {
+            Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("UPDATE item SET name=?,QTY=?,price=? where id=?");
+            preparedStatement.setObject(4, itemCode);
+            preparedStatement.setObject(1, itemName);
+            preparedStatement.setObject(2, itemQty);
+            preparedStatement.setObject(3, itemPrice);
+            int i = preparedStatement.executeUpdate();
+
+            if ( i > 0) {
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                objectBuilder.add("status", 200);
+                objectBuilder.add("message", "Successfully Updated");
+                objectBuilder.add("data", "");
+                writer.print(objectBuilder.build());
+            } else {
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                objectBuilder.add("status", 400);
+                objectBuilder.add("message", "Update Failed");
+                objectBuilder.add("data", "");
+                writer.print(objectBuilder.build());
+            }
+            connection.close();
+        } catch (SQLException throwables) {
+            JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+            objectBuilder.add("status", 500);
+            objectBuilder.add("message", "Update Failed");
+            objectBuilder.add("data", throwables.getLocalizedMessage());
             writer.print(objectBuilder.build());
         }
     }

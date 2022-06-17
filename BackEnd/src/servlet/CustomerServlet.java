@@ -165,7 +165,9 @@ public class CustomerServlet extends HttpServlet {
             preparedStatement.setObject(2, customerAddress);
             preparedStatement.setObject(3, customerSalary);
             preparedStatement.setObject(4, customerID);
-            if (preparedStatement.executeUpdate() > 0) {
+            int i = preparedStatement.executeUpdate();
+
+            if (i > 0) {
                 JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                 objectBuilder.add("status", 200);
                 objectBuilder.add("message", "Successfully Updated");
