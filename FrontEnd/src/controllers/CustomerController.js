@@ -84,9 +84,9 @@ function loadAllCustomer() {
             }
             cusValueClick();
         },
-        error:function (ob, errorSatus,t) {
+        error:function (ob, errorStatus,t) {
             console.log(ob)
-            console.log(errorSatus)
+            console.log(errorStatus)
             console.log(t)
         }
     })
