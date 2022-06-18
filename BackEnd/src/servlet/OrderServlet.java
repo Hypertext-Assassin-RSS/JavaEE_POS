@@ -31,25 +31,25 @@ public class OrderServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String object = req.getParameter("object");
         PrintWriter writer = resp.getWriter();
+        resp.setContentType("application/json");
         try {
+            String object = req.getParameter("object");
+            Connection connection = dataSource.getConnection();
         switch (object){
             case "customer" :
                     String cusID = req.getParameter("cusID");
-                    resp.setContentType("application/json");
-                    Connection connection = dataSource.getConnection();
                     PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM customer WHERE id = ?");
                     preparedStatement.setObject(1,cusID);
-                    ResultSet resultSet = preparedStatement.executeQuery();
                     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+                    ResultSet resultSet = preparedStatement.executeQuery();
                     while (resultSet.next()){
                         String id = resultSet.getString(1);
                         String name = resultSet.getString(2);
                         String address = resultSet.getString(3);
                         String salary = resultSet.getString(4);
 
-                        System.out.println(id+":"+name+":"+address+":"+salary);
+                        /*System.out.println(id+":"+name+":"+address+":"+salary);*/
 
                         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
                         objectBuilder.add("id",id);
@@ -68,6 +68,34 @@ public class OrderServlet extends HttpServlet {
 
                 break;
             case "item" :
+                String itemCode = req.getParameter("itemCode");
+                PreparedStatement preparedStatement1 = connection.prepareStatement("SELECT * FROM item WHERE id=?");
+                preparedStatement1.setObject(1,itemCode);
+                JsonArrayBuilder arrayBuilder1 = Json.createArrayBuilder();
+                ResultSet resultSet1 = preparedStatement1.executeQuery();
+                while (resultSet1.next()){
+                    String id = resultSet1.getString(1);
+                    String name = resultSet1.getString(2);
+                    String QTY = resultSet1.getString(3);
+                    String price = resultSet1.getString(4);
+
+                    /*System.out.println(id+":"+name+":"+QTY+":"+price);*/
+
+
+                    JsonObjectBuilder builder = Json.createObjectBuilder();
+                    builder.add("id",id);
+                    builder.add("name",name);
+                    builder.add("QTY",QTY);
+                    builder.add("price",price);
+                    arrayBuilder1.add(builder.build());
+                }
+                JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+                objectBuilder.add("status",201);
+                objectBuilder.add("message","Done");
+                objectBuilder.add("data",arrayBuilder1.build());
+                writer.print(objectBuilder.build());
+
+                connection.close();
 
                 break;
         }

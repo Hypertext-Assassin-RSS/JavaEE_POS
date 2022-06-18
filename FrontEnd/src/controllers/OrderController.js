@@ -101,15 +101,14 @@ $(function loadItem(){
         console.log(itemCode);
 
         $.ajax({
-            url:"http://localhost:8080/BackEnd_Web_exploded/order?itemCode"+itemCode,
+            url:"http://localhost:8080/BackEnd_Web_exploded/order?object=item&itemCode="+itemCode,
             method:"GET",
             success:function (resp) {
                 for (const item of resp.data){
-
+                    $("#itemNameO").val(item.name)
+                    $("#qtyOnHandO").val(item.QTY)
+                    $("#priceO").val(item.price)
                 }
-
-
-
             },error:function (ob,errorStatus,t) {
                 console.log(ob)
                 console.log(errorStatus)
