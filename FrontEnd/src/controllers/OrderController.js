@@ -15,8 +15,32 @@ $("#iDate").val(today)
 
 loadAllCusID();
 loadAllItemCode();
+generateOrderID();
 
+$("#oId").focus().keydown(function (e) {
+    if (e.key == "Enter"){
+        $("#idCmb").focus().keydown(function (e) {
+            if (e.key == "Enter"){
+                itemValidation();
+            }
+        })
+    }
+})
 
+function itemValidation() {
+    $("#itemIdCmb").focus().keydown(function (e) {
+        if (e.key == "Enter"){
+            $("#oQty").focus().keydown(function (e) {
+                if (e.key == "Enter"){
+                    $("#btnAddToCart").focus().keydown(function (e) {
+
+                    });
+                }
+
+            })
+        }
+    })
+}
 function loadAllCusID() {
     let i = 1
     $("#idCmb").empty();
@@ -118,3 +142,72 @@ $(function loadItem(){
 
     });
 });
+
+
+$("#btnAddToCart").click(function () {
+    let itemOb = {
+        itemCode:$("#itemIdCmb").val(),
+        itemName: $("#itemNameO").val(),
+        itemQty:$("#oQty").val(),
+        itemPrice:$("#priceO").val()
+    }
+
+    orderDB.push(itemOb);
+
+    console.log("order"+itemOb)
+    console.log(orderDB)
+});
+
+
+$("#btnPurchase").click(function () {
+    let order = {
+        orderID: $("#oId").val(),
+        orderDate: $("#iDate").val(),
+        customerID:$("#idCmb").val(),
+        total:$("#lblFullTotal").text()
+    }
+    /*item:orderDB*/
+    $.ajax({
+        url:"http://localhost:8080/BackEnd_Web_exploded/order",
+        method:"POST",
+        contentType:"application/json",
+        data:JSON.stringify(order),
+        success:function (res) {
+            if (res.status === 200) {
+                alert(res.message);
+                loadAllItems();
+                console.log(res.message)
+                console.log(res)
+            } /*else if (res.status === 400) {
+                alert(res.message);
+                console.log(res.message)
+                console.log(res)
+            } else {
+                alert(res.data);
+                console.log(res.message)
+                console.log(res)
+            }*/
+
+        },error:function (ob, errorStatus) {
+            console.log(ob);
+            console.log(errorStatus)
+        }
+    })
+
+});
+
+
+function generateOrderID() {
+    $.ajax({
+        url:"http://localhost:8080/BackEnd_Web_exploded/order?object=order",
+        method:"GET",
+        contentType:"application/json",
+        success:function (res) {
+            $("#oId").val(res.orderID)
+            },error:function (ob, errorStatus) {
+            console.log(ob);
+            console.log(errorStatus)
+        }
+
+    })
+}

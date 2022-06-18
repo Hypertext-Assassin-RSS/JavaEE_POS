@@ -157,7 +157,7 @@ public class ItemServlet extends HttpServlet {
         PrintWriter writer = resp.getWriter();
         resp.setContentType("application/json");
 
-        System.out.println(itemCode+":"+itemName+":"+itemQty+":"+itemPrice);
+        /*System.out.println(itemCode+":"+itemName+":"+itemQty+":"+itemPrice);*/
 
 
         try {
