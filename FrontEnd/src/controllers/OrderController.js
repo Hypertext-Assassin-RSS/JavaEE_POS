@@ -156,6 +156,8 @@ $("#btnAddToCart").click(function () {
 
     console.log("order"+itemOb)
     console.log(orderDB)
+
+    countSubTotal();
 });
 
 
@@ -210,4 +212,24 @@ function generateOrderID() {
         }
 
     })
+}
+
+
+
+let subtotal = 0;
+let subtotalPre;
+function countSubTotal() {
+    let itemPrice = $("#priceO").val();
+    let orderQty = $("#oQty").val();
+
+    subtotalPre= itemPrice * orderQty;
+    console.log(itemPrice)
+    console.log(orderQty)
+    console.log(subtotalPre)
+
+    $("#lblSubTotal").text(subtotalPre+" LKR");
+    subtotal = subtotalPre + subtotal;
+    console.log(subtotal);
+
+    $("#lblFullTotal").text(subtotal+" LKR")
 }
