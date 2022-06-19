@@ -160,9 +160,9 @@ $("#btnAddToCart").click(function () {
     countSubTotal();
 });
 
-let preDiscount = 0;
-let preBalance = 0;
-let balance = 0;
+let preDiscount ;
+let preBalance ;
+let balance;
 function countBalance() {
     let total = parseInt($("#lblFullTotal").text());
     let cash = parseInt($("#cash").val());
@@ -177,17 +177,19 @@ function countBalance() {
 
     console.log("Bal:"+balance);
     $("#balanceO").val(balance);
+
+    $("#lblFullTotal").text(preBalance+" LKR")
 }
 
 
 $("#btnPurchase").click(function () {
+    countBalance();
     let order = {
         orderID: $("#oId").val(),
         orderDate: $("#iDate").val(),
         customerID:$("#idCmb").val(),
         total:$("#lblFullTotal").text()
     }
-    countBalance();
     /*item:orderDB*/
     $.ajax({
         url:"http://localhost:8080/BackEnd_Web_exploded/order",
