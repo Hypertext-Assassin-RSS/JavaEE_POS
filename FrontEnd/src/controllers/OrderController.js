@@ -160,6 +160,25 @@ $("#btnAddToCart").click(function () {
     countSubTotal();
 });
 
+let preDiscount = 0;
+let preBalance = 0;
+let balance = 0;
+function countBalance() {
+    let total = parseInt($("#lblFullTotal").text());
+    let cash = parseInt($("#cash").val());
+    let discount = parseInt($("#discount").val());
+
+    preDiscount = (total/100) * discount;
+    console.log("preDis:"+preDiscount);
+    preBalance = total - preDiscount;
+
+    console.log("preBal:"+preBalance)
+    balance = cash - preBalance;
+
+    console.log("Bal:"+balance);
+    $("#balanceO").val(balance);
+}
+
 
 $("#btnPurchase").click(function () {
     let order = {
@@ -168,6 +187,7 @@ $("#btnPurchase").click(function () {
         customerID:$("#idCmb").val(),
         total:$("#lblFullTotal").text()
     }
+    countBalance();
     /*item:orderDB*/
     $.ajax({
         url:"http://localhost:8080/BackEnd_Web_exploded/order",
@@ -175,25 +195,17 @@ $("#btnPurchase").click(function () {
         contentType:"application/json",
         data:JSON.stringify(order),
         success:function (res) {
-            if (res.status === 200) {
                 alert(res.message);
                 loadAllItems();
                 console.log(res.message)
                 console.log(res)
-            } /*else if (res.status === 400) {
-                alert(res.message);
-                console.log(res.message)
-                console.log(res)
-            } else {
-                alert(res.data);
-                console.log(res.message)
-                console.log(res)
-            }*/
 
-        },error:function (ob, errorStatus) {
+            } ,error:function (ob, errorStatus) {
             console.log(ob);
             console.log(errorStatus)
         }
+
+
     })
 
 });
@@ -233,3 +245,4 @@ function countSubTotal() {
 
     $("#lblFullTotal").text(subtotal+" LKR")
 }
+
